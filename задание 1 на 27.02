@@ -1,0 +1,48 @@
+import heapq
+def dijkstra(graph, start, end):
+    n = len(graph)
+    dist = [float('inf')] * n
+    dist[start] = 0
+    a = [-1] * n  #для нахождения пути 
+    pq = [(0, start)]
+    
+    while pq:
+        d, u = heapq.heappop(pq)
+        if d > dist[u]:
+            continue
+            
+        if u == end:
+            break
+        for v, weight in graph[u]:
+            new_dist = dist[u] + weight
+            if new_dist < dist[v]:
+                dist[v] = new_dist
+                a[v] = u
+                heapq.heappush(pq, (new_dist, v))
+    
+    return dist[end], a
+
+def get_path(a, start, end):
+    if a[end] == -1 and start != end:
+        return None 
+    
+    path = []
+    current = end
+    while current != -1:
+        path.append(current)
+        current = a[current]
+    return path[::-1]
+
+n, m, s, t = map(int, input().split())
+graph = [[] for _ in range(n)]
+for _ in range(m):
+    u, v, dist = map(int, input().split())
+    graph[u].append((v, dist))
+distance, a = dijkstra(graph, s, t)
+path = get_path(a, s, t)
+print("\nРезультат:")
+if path is None:
+    print(f"Не могу найти маршрут :'(")
+else:
+    print(distance)
+    print(' '.join(map(str, path)))
