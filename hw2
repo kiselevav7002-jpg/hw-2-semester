@@ -1,0 +1,66 @@
+#циклики
+def build_suffix_array(s):
+    n = len(s)
+    suffixes = []
+    pref=[]
+    for i in range(n):
+        suffixes.append(s[i:])
+    for j in range(n):
+        pref.append(s[:j])
+    combined=[suffixes[i]+pref[i] for i in range(n)]
+    combined.sort()
+    a=combined.index(s)
+    a+=1
+    res= ''.join(i[-1] for i in combined)
+    print(a)
+    print(res)
+s=input()
+build_suffix_array(s)
+
+#периодика
+def min_period(pattern):
+    n = len(pattern)
+    lps = [0]*n
+    len1 = 0
+    i = 1
+    while i < n:
+        if pattern[i] == pattern[len1]:
+            len1 += 1
+            lps[i] = len1
+            i += 1
+        else:
+            if len1 != 0:
+                len1 = lps[len1 - 1]
+            else:
+                lps[i] = 0
+                i += 1
+    p=n-lps[-1]
+    if n % p == 0:
+        return p
+    else:
+        return n
+pattern=input()
+min_period(pattern) 
+
+#Алгоритм Манакера
+def manaker(s):
+    t = '#'+'#'.join(s) + '#' #разделения нужны чтобы любой палиндром стал нечетным(как я поняла, это более простая версия этого алгоритма)
+    n = len(t)
+    p = [0]*n
+    center = 0
+    right = 0
+    for i in range(n):
+        ii = 2*center - i
+        if i < right:
+            p[i] = min(right - i, p[ii])
+        while i + p[i] + 1 < n and i - p[i] - 1 >= 0 and t[i + p[i] + 1] == t[i - p[i] - 1]:
+            p[i] += 1
+        if i + p[i] > right:
+            center = i
+            right = i + p[i]
+    count= 0
+    for j in p:
+        count+= (j+1) // 2
+    return count
+s=input()
+print(manaker(s))
